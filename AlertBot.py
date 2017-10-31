@@ -1,8 +1,11 @@
 import RPi.GPIO as GPIO
 import time
-from subprocess import Popen
+from subprocess import Popen, PIPE
 
 MATTERSEND_CONF = '/home/pi/techday/fridgebot/mattersend.conf'
+
+irc = Popen(['ssh','-t','tracker@hacklab.ihme.org'], stdin=PIPE)
+irc.stdin.write("pass freenode\nuser\nnick\n".encode())
 
 buttonPin = 26
 GPIO.setmode(GPIO.BCM)
@@ -20,6 +23,7 @@ while True:
         print('Alert sent to mattermost', flush=True)
         Popen(['mattersend', '--config', MATTERSEND_CONF, '-f',
                '/home/pi/techday/fridgebot/auki.txt'])
+        irc.stdin.write("notice #hacklab.jkl :Jääkaapin ovi on jäänyt auki!\n".encode())
         alert = True
         t_end = time.time() + wait_seconds
         alertfade_time = time.time() + alert_wait
@@ -30,4 +34,5 @@ while True:
             alert = False
             Popen(['mattersend', '--config', MATTERSEND_CONF, '-f',
                    '/home/pi/techday/fridgebot/suljettu.txt'])
+            irc.stdin.write("notice #hacklab.jkl :Jääkaapin ovi on suljettu, kiitos!\n".encode())
     time.sleep(0.02)
