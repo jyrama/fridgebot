@@ -10,6 +10,7 @@ Include following config-file in project directory:
 	channel = channels_name
 
 Install following dependencies:
+
 	pip3 install -r requirements.txt
 
 Start project with Python3
