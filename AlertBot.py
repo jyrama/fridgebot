@@ -11,7 +11,7 @@ buttonPin = 26
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(buttonPin, GPIO.IN)
 
-wait_seconds = 5
+wait_seconds = 120
 alert_wait = wait_seconds * 2
 
 t_end = time.time() + wait_seconds
