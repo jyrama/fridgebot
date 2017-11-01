@@ -32,11 +32,11 @@ def notify_mattermost():
     print('Alert sent to Mattermost', flush=True)
 
 
-def thanks_irc():
+def thanks_mattermost():
     Popen(['mattersend', '--config', MATTERSEND_CONF, '-f', DOOR_CLOSED_FILE])
 
 
-def thanks_mattermost():
+def thanks_irc():
     irc.stdin.write("notice #hacklab.jkl :Jääkaapin ovi on suljettu, kiitos!\n".encode())
     irc.stdin.flush()
 
