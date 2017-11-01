@@ -20,14 +20,32 @@ t_end = time.time() + wait_seconds
 alertfade_time = time.time() + alert_wait
 alert = False
 
+
+def notify_irc():
+    irc.stdin.write("notice #hacklab.jkl :Jääkaapin ovi on jäänyt auki!\n".encode())
+    irc.stdin.flush()
+    print('Alert sent to IRC', flush=True)
+
+
+def notify_mattermost():
+    Popen(['mattersend', '--config', MATTERSEND_CONF, '-f', DOOR_OPEN_FILE])
+    print('Alert sent to Mattermost', flush=True)
+
+
+def thanks_irc():
+    Popen(['mattersend', '--config', MATTERSEND_CONF, '-f', DOOR_CLOSED_FILE])
+
+
+def thanks_mattermost():
+    irc.stdin.write("notice #hacklab.jkl :Jääkaapin ovi on suljettu, kiitos!\n".encode())
+    irc.stdin.flush()
+
+
 while True:
     if GPIO.input(buttonPin):
         if time.time() >= t_end:
-            print('Alert sent to mattermost', flush=True)
-            Popen(['mattersend', '--config', MATTERSEND_CONF, '-f',
-                   DOOR_OPEN_FILE])
-            irc.stdin.write("notice #hacklab.jkl :Jääkaapin ovi on jäänyt auki!\n".encode())
-            irc.stdin.flush()
+            notify_mattermost()
+            notify_irc()
             alert = True
             t_end = time.time() + wait_seconds
             alertfade_time = time.time() + alert_wait
@@ -35,9 +53,7 @@ while True:
         t_end = time.time() + wait_seconds
         if alert and (time.time() >= alertfade_time):
             print('Alert off', flush=True)
+            thanks_mattermost()
+            thanks_irc()
             alert = False
-            Popen(['mattersend', '--config', MATTERSEND_CONF, '-f',
-                   DOOR_CLOSED_FILE])
-            irc.stdin.write("notice #hacklab.jkl :Jääkaapin ovi on suljettu, kiitos!\n".encode())
-            irc.stdin.flush()
     time.sleep(0.02)
