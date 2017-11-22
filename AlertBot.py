@@ -1,13 +1,8 @@
 import RPi.GPIO as GPIO
 import time
-from subprocess import Popen, PIPE
 
-MATTERSEND_CONF = '/home/pi/techday/fridgebot/mattersend.conf'
-DOOR_CLOSED_FILE = '/home/pi/techday/fridgebot/suljettu.txt'
-DOOR_OPEN_FILE = '/home/pi/techday/fridgebot/auki.txt'
-
-irc = Popen(['ssh', '-t', 'hacklab-irc'], stdin=PIPE)
-irc.stdin.write("pass freenode\nuser\nnick\n".encode())
+from glob import glob
+from importlib import import_module
 
 buttonPin = 26
 GPIO.setmode(GPIO.BCM)
@@ -20,32 +15,30 @@ t_end = time.time() + wait_seconds
 alertfade_time = time.time() + alert_wait
 alert = False
 
+# load sink modules, symlinked etc, from sinks folder
+sinks = [import_module(x.replace('/', '.')[:-3]) for x in glob('sinks/*.py')]
 
-def notify_irc():
-    irc.stdin.write("notice #hacklab.jkl :Jääkaapin ovi on jäänyt auki!\n".encode())
-    irc.stdin.flush()
-    print('Alert sent to IRC', flush=True)
+if len(sinks) == 0:
+    import sys
+    print('No modules loaded!')
+    sys.exit(1)
 
-
-def notify_mattermost():
-    Popen(['mattersend', '--config', MATTERSEND_CONF, '-f', DOOR_OPEN_FILE])
-    print('Alert sent to Mattermost', flush=True)
-
-
-def thanks_mattermost():
-    Popen(['mattersend', '--config', MATTERSEND_CONF, '-f', DOOR_CLOSED_FILE])
+    
+def send_notifications():
+    for sink in sinks:
+        sink.notify()
 
 
-def thanks_irc():
-    irc.stdin.write("notice #hacklab.jkl :Jääkaapin ovi on suljettu, kiitos!\n".encode())
-    irc.stdin.flush()
+def send_thanks():
+    for sink in sinks:
+        sink.thanks()
 
 
+# main loop
 while True:
     if GPIO.input(buttonPin):
         if time.time() >= t_end:
-            notify_mattermost()
-            notify_irc()
+            send_notifications()
             alert = True
             t_end = time.time() + wait_seconds
             alertfade_time = time.time() + alert_wait
@@ -53,7 +46,6 @@ while True:
         t_end = time.time() + wait_seconds
         if alert and (time.time() >= alertfade_time):
             print('Alert off', flush=True)
-            thanks_mattermost()
-            thanks_irc()
+            send_thanks()
             alert = False
     time.sleep(0.02)
