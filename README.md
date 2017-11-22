@@ -38,19 +38,23 @@ The basic concept for a Fridgebot sink is simple:
 One using Systemd might use Fridgebot as a user service. An example
 .service file configuration can be found from *fridgebot.service.example*.
 This can be copied, with modifications some notifications where needed,
-to ´~/.config/systemd/user/fridgebot.service´. At least check your working
+to *~/.config/systemd/user/fridgebot.service*. At least check your working
 directory, please.
 
 Enable lingering for the user for running the service without a session:
-´loginctl enable-linger best-user´
+
+	loginctl enable-linger best-user
 
 The service has to be enable before starting:
-´systemd --user enable fridgebot´
+
+	systemd --user enable fridgebot
 
 Start it:
-´systemd --user start fridgebot´
+
+	systemd --user start fridgebot
 
 Check its status:
-´systemd --user status fridgebot´
+
+	systemd --user status fridgebot
 
 Your ice cream is now saved.
