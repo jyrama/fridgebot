@@ -1,6 +1,6 @@
 from subprocess import Popen, PIPE
 
-irc = Popen(['ssh', '-t', 'hacklab-irc'], stdin=PIPE)
+irc = Popen(['ssh', '-T', 'hacklab-irc'], stdin=PIPE)
 irc.stdin.write("pass freenode\nuser\nnick\n".encode())
 irc.stdin.flush()
 
