@@ -1,0 +1,5 @@
+{
+    "button_pin": 26,
+    "wait_seconds": 120,
+    "alert_wait": 240
+}
