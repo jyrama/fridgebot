@@ -1,5 +1,8 @@
 {
     "button_pin": 26,
     "wait_seconds": 120,
-    "alert_wait": 240
+    "alert_wait": 240,
+    "mainloop_sleep": 0.02
+    "sinks": {
+    }
 }
