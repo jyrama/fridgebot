@@ -4,5 +4,17 @@
     "alert_wait": 240,
     "mainloop_sleep": 0.02
     "sinks": {
+	"hacklab-irc": {
+	    "proxy": "hacklab-irc",
+	    "startup_msg": "Fridgebot is alive",
+	    "channel": "#hacklab.jkl",
+	    "notify_msg": "Pakastimen ovi on jäänyt auki!",
+	    "thanks_msg": "Pakastimen ovi on suljettu, kiitos!"
+	}
+	"mattermost": {
+	    "url": "http://example.com/webcat",
+	    "notify_msg": "Jääkaapin ovi on jäänyt auki!",
+	    "thanks_msg": "Jääkaapin ovi on suljettu, kiitos! :tada:"
+	}
     }
 }
