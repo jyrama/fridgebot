@@ -32,6 +32,8 @@ if len(sinks) == 0:
 for module in sinks:
     module_name = module.__name__.split('.', maxsplit=1)[1]
     module.config = config['sinks'].get([module_name])
+    if hasattr(module, 'init'):
+        module.init()
 
 
 def send_notifications():

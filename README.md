@@ -6,32 +6,33 @@ one needs a bit more config, help for that is included below.
 Couple of sinks included can be found under *sinks-available*.
 
 ## Mattermost integration
-Include following config-file in project directory:
-	mattersend.conf
-	
-	[DEFAULT]
-	url = https://mattermost.example.com/hooks/XXXXXXXXXXXXXXXXXXXXXXX
-	icon = :ghost:
-	username = users_name
-	channel = channels_name
+Set your Mattermost incoming webhook's url in config.json.
 
-Install following dependencies:
+## Install
 
-	pip3 install -r requirements.txt
+1. Clone the project source to your preferred path of your favourite stuff.
+2. Start project with Python3.
 
-Start project with Python3
+Consider creating a Systemd service where Systemd is available.
 
 ## Writing more sinks
 
 The basic concept for a Fridgebot sink is simple:
 
 1. The sink to be loaded must find itself under the *sinks* folder.
-2. It must run its setup tasks, eg. opening processes into global variables,
-   when the module is loaded. No code under functions inside methods like
-   *setup_initialise_or_something()* but just strait below module level.
-3. Its filename must end in *.py*.
-4. It must implement methods *notify()* and *thanks()*. These are called
-   sending notifications and thanks for closing the fridge door.
+2. It will have an attribute *config* set by its loader in AlertBot.
+   The config variable will then include settings specified in config.json
+   by the user.
+2. It can setup what ever module level variables during loading.
+   This scheme has changed **just a bit** in during few interesting commits.
+   As of writing this line, the sink module to be loaded can also include an
+   initialization function, **init()**, which can address config variables
+   set to module's own attribute *config* which is set by the loader in
+   AlertBot during loading all the sink modules available.
+4. Its filename must end in *.py*.
+5. It must implement methods *notify()* and *thanks()* besides the *init()*
+   mentioned before. These are called for sending complaints for open doors
+   and thanks for closing them afterwards.
 
 ## Systemd user service
 
