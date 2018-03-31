@@ -30,7 +30,8 @@ if len(sinks) == 0:
 
 # Set config attribute for modules loaded
 for module in sinks:
-    module.config = config
+    module_name = module.__name__.split('.', maxsplit=1)[1]
+    module.config = config['sinks'].get([module_name])
 
 
 def send_notifications():
